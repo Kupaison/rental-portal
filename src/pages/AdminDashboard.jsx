@@ -241,8 +241,8 @@ function AddListingView({ editId, onSaved }) {
       if (editId) {
         await supabase.from('listings').update(payload).eq('id', editId)
       } else {
-        const { data } = await supabase.from('listings').insert(payload).select().single()
-        listingId = data.id
+const { data, error } = await supabase.from('listings').insert(payload).select('id').single()
+if (error) { alert('Supabase error: ' + error.message); setSaving(false); return; }        listingId = data.id
       }
 
       // Upload new photos
