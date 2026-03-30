@@ -76,7 +76,7 @@ export default function ClientPortal() {
 
       {/* Filter + View Toggle bar */}
       <div style={{ background: 'white', borderBottom: '1px solid var(--border)', padding: '12px 24px', position: 'sticky', top: '72px', zIndex: 90 }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}><div className='filter-bar'>
           <span style={{ fontSize: '11px', fontWeight: '500', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Filter:</span>
           <FilterPill options={['Any', '1+', '2+', '3+', '4+']} onChange={v => setFilter(f => ({ ...f, minBed: v === 'Any' ? 0 : parseInt(v) }))} />
           <FilterPill options={['Any Price', 'Under $1,500', 'Under $2,000', 'Under $2,500', 'Under $3,000']} onChange={v => {
@@ -109,14 +109,14 @@ export default function ClientPortal() {
             </select>
           </div>
 
-          <span style={{ fontSize: '11px', color: 'var(--muted)' }}>{filtered.length} home{filtered.length !== 1 ? 's' : ''}</span>
+          <span style={{ fontSize: '11px', color: 'var(--muted)', flexShrink: 0 }}>{filtered.length} home{filtered.length !== 1 ? 's' : ''}</span></div>
         </div>
       </div>
 
       {/* Content */}
       <main style={{ maxWidth: '1200px', margin: '0 auto', padding: viewMode === 'map' ? '24px' : '40px 24px 80px' }}>
         {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+          <div className='listing-grid'>
             {[1,2,3].map(i => (
               <div key={i} style={{ borderRadius: '12px', overflow: 'hidden', background: 'white', boxShadow: 'var(--shadow-card)' }}>
                 <div className="skeleton" style={{ height: '220px' }} />
@@ -147,7 +147,7 @@ export default function ClientPortal() {
             />
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '24px' }}>
+          <div className='listing-grid'>
             {filtered.map((listing, i) => (
               <div key={listing.id} style={{ animationDelay: `${i * 0.07}s` }}>
                 <ListingCard listing={listing} onInterest={setSelectedListing} />
