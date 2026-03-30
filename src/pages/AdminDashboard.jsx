@@ -228,8 +228,8 @@ function AddListingView({ editId, onSaved }) {
     try {
       const payload = {
         address: form.address, city: form.city, state: form.state, zip: form.zip,
-        price: parseInt(form.price), bedrooms: parseFloat(form.bedrooms),
-        bathrooms: parseFloat(form.bathrooms), sqft: form.sqft ? parseInt(form.sqft) : null,
+        price: parseInt(form.price),bedrooms: form.bedrooms ? parseFloat(form.bedrooms) : 0,
+bathrooms: form.bathrooms ? parseFloat(form.bathrooms) : 0, sqft: form.sqft ? parseInt(form.sqft) : null,
         description: form.description || null,
         amenities: form.amenities ? form.amenities.split(',').map(s => s.trim()).filter(Boolean) : [],
         available_date: form.available_date || null,
