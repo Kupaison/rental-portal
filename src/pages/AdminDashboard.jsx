@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
+import FolderDropZone from '../components/FolderDropZone'
 
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'kupa2024admin'
 
@@ -177,11 +178,33 @@ function AddListingView({ editId, onSaved }) {
   const [photos, setPhotos] = useState([])
   const [existingPhotos, setExistingPhotos] = useState([])
   const [saving, setSaving] = useState(false)
+  const [folderUsed, setFolderUsed] = useState(false)
   const fileRef = useRef()
 
   useEffect(() => {
     if (editId) loadExisting()
   }, [editId])
+
+  function handleFolderParsed(parsedData, photoFiles) {
+    setForm(f => ({
+      ...f,
+      address: parsedData.address || f.address,
+      city: parsedData.city || f.city,
+      state: parsedData.state || f.state,
+      zip: parsedData.zip || f.zip,
+      price: parsedData.price || f.price,
+      bedrooms: parsedData.bedrooms || f.bedrooms,
+      bathrooms: parsedData.bathrooms || f.bathrooms,
+      sqft: parsedData.sqft || f.sqft,
+      description: parsedData.description || f.description,
+      amenities: parsedData.amenities?.length ? parsedData.amenities.join(', ') : f.amenities,
+      pets_allowed: parsedData.pets_allowed ?? f.pets_allowed,
+      parking: parsedData.parking || f.parking,
+      laundry: parsedData.laundry || f.laundry,
+    }))
+    if (photoFiles.length > 0) setPhotos(photoFiles)
+    setFolderUsed(true)
+  }
 
   async function loadExisting() {
     const { data } = await supabase.from('listings').select('*, listing_photos(*)').eq('id', editId).single()
@@ -261,9 +284,22 @@ function AddListingView({ editId, onSaved }) {
 
   return (
     <div style={{ maxWidth: '700px' }}>
-      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: '400', marginBottom: '28px' }}>
+      <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', fontWeight: '400', marginBottom: '8px' }}>
         {editId ? 'Edit Listing' : 'Add New Listing'}
       </h1>
+      <p style={{ color: 'var(--muted)', fontSize: '13px', marginBottom: '28px' }}>
+        Drop your address folder below to auto-fill from the MLS sheet — or fill in manually.
+      </p>
+
+      {!editId && (
+        <FolderDropZone onParsed={handleFolderParsed} />
+      )}
+
+      {folderUsed && (
+        <div style={{ marginBottom: '20px', padding: '12px 16px', background: 'rgba(58,125,68,0.08)', border: '1px solid rgba(58,125,68,0.25)', borderRadius: '8px', fontSize: '13px', color: 'var(--success)' }}>
+          ✅ Auto-filled from MLS sheet — review each field and correct anything that looks off
+        </div>
+      )}
 
       <Section title="Address">
         <Row><FormField label="Street Address *" value={form.address} onChange={v => set('address', v)} /></Row>
